@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Webkul Odoomagentoshop Menu
+ *
+* @category  Webkul
+ * @package   Webkul_Odoomagentoshop
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2017 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	<menu>
+	<!-- <add id="Webkul_Odoomagentoshop::manager" title="Odoo Connector" module="Webkul_Odoomagentoshop" sortOrder="199" resource="Webkul_Odoomagentoshop::manager"/>
+			<add id="Webkul_Odoomagentoconnect::general" title="General" module="Webkul_Odoomagentoconnect" sortOrder="5" parent="Webkul_Odoomagentoshop::manager" resource="Webkul_Odoomagentoshop::general"/> -->
+		<add id="Webkul_Odoomagentoshop::shop" title="Magento Stores" module="Webkul_Odoomagentoshop" sortOrder="1" parent="Webkul_Odoomagentoconnect::general" action="odoomagentoshop/shop" resource="Webkul_Odoomagentoshop::shop"/>
+	</menu>
+</config>

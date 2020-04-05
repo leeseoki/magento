@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Webkul Odoomagentoshop events di
+ *
+* @category  Webkul
+ * @package   Webkul_Odoomagentoshop
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2017 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Webkul\Odoomagentoshop\Api\Data\ShopInterface" type="Webkul\Odoomagentoshop\Model\Shop" />
+    <virtualType name="PageGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">Webkul\Odoomagentoshop\Model\ResourceModel\Shop\Collection</argument>
+            <argument name="filterPool" xsi:type="object" shared="false">OdoomagentomultishopGirdFilterPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Webkul\Odoomagentoshop\Model\ResourceModel\Shop\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">odoomagentoshop_shop</argument>
+            <argument name="resourceModel" xsi:type="string">Webkul\Odoomagentoshop\Model\ResourceModel\Shop</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="odoomagentoshop_shop_listing_data_source" xsi:type="string">Webkul\Odoomagentoshop\Model\ResourceModel\Shop\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+</config>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Webkul Odoomagentoshop acl
+ *
+* @category  Webkul
+ * @package   Webkul_Odoomagentoshop
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2017 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Webkul_Odoomagentoshop::manager" title="Odoo Connector" sortOrder="990" >
+                    <resource id="Webkul_Odoomagentoshop::general" title="General Mapping" sortOrder="10" >
+                        <resource id="Webkul_Odoomagentoshop::shop" title="Shop Mapping" sortOrder="10" >
+                            <resource id="Webkul_Odoomagentoshop::shop_list" title="List View" sortOrder="10"/>
+                            <resource id="Webkul_Odoomagentoshop::shop_new" title="Create" sortOrder="20"/>
+                            <resource id="Webkul_Odoomagentoshop::shop_view" title="View" sortOrder="30"/>
+                            <resource id="Webkul_Odoomagentoshop::shop_save" title="Save" sortOrder="40"/>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

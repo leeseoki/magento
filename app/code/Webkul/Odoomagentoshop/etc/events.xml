@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Webkul Odoomagentoshop events xml
+ *
+* @category  Webkul
+ * @package   Webkul_Odoomagentoshop
+ * @author    Webkul
+ * @copyright Copyright (c) 2010-2017 Webkul Software Private Limited (https://webkul.com)
+ * @license   https://store.webkul.com/license.html
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    
+    <event name="odoo_order_sync_before">
+        <observer name="webkul_odoomagentoshop_odoo_order_sync_before_observer" instance="Webkul\Odoomagentoshop\Observer\AddStoreObserver" />
+    </event>
+    
+</config>
