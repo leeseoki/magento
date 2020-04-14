@@ -56,6 +56,7 @@ class Payment extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
     public function getMagePaymentArray()
     {   
+        
         $payment = [];
         $payment[''] ='--Select Magento Payment Method--';
         /* $collection = $this->_modelConfig->getActiveMethods();
@@ -73,6 +74,12 @@ class Payment extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
     public function getErpPaymentArray()
     {
+
+        $collection = $this->_objectManager->create("\Magento\Sales\Model\Order")
+            ->load(4131);
+        echo "<pre>";
+        print_r($collection->debug());
+        Die;
         $payment = [];
         $helper = $this->_helper;
         $helper->getSocketConnect();

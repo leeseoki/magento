@@ -43,8 +43,10 @@ class Save extends \Webkul\Odoomagentoconnect\Controller\Adminhtml\Carrier
                 $this->_redirect('odoomagentoconnect/*/');
                 return;
             }
-            $shippingTitle = $this->_scopeConfig->getValue('carriers/'.$data['carrier_code'].'/title');
-            $data['carrier_name'] = $shippingTitle;
+            // $shippingTitle = $this->_scopeConfig->getValue('carriers/'.$data['carrier_code'].'/title');
+            $carrierData = explode("|", $data['carrier_code']);
+            $data['carrier_code'] = $carrierData[0];
+            $data['carrier_name'] = $carrierData[1];
             $data['created_by'] = 'Manual Mapping';
             $carriermodel->setData($data);
             $carriermodel->save();

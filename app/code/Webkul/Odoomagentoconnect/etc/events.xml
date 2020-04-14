@@ -29,9 +29,9 @@
         <observer name="webkul_odoomagentoconnect_sales_order_shipment_after_observer" instance="Webkul\Odoomagentoconnect\Observer\SalesOrderShipmentAfterObserver" />
     </event>
 
-    <event name="order_cancel_after">
+    <!-- <event name="order_cancel_after">
         <observer name="webkul_odoomagentoconnect_order_cancel_after_observer" instance="Webkul\Odoomagentoconnect\Observer\SalesOrderCancelObserver" />
-    </event>
+    </event> -->
 
     <event name="catalog_category_prepare_save">
         <observer name="webkul_odoomagentoconnect_catalog_category_prepare_save_observer" instance="Webkul\Odoomagentoconnect\Observer\CategorySaveAfterObserver" />

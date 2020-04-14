@@ -193,6 +193,12 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 $orderArray['workflow_process_id'] = new xmlrpcval($mappingcollection['odoo_workflow_id'], "string");
             }
         }
+         /* Adding Bold Order Comment*/
+        $orderComment = $thisOrder->getBoldOrderComment();
+        if ($orderComment) {
+            $orderArray['order_comment'] = new xmlrpcval(urlencode($orderComment), "string");
+        }
+
         /* Adding Extra Fields*/
         foreach ($extraFieldArray as $field => $value) {
             $orderArray[$field]= $value;
@@ -235,7 +241,8 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $write = $resource->getConnection('default');
         $shippingIncludesTax = $this->_scopeConfig->getValue('tax/calculation/shipping_includes_tax');
         $priceIncludesTax = $this->_scopeConfig->getValue('tax/calculation/price_includes_tax');
-
+        $cmsg = "ORDER >>" . $thisOrder->getIncrementId();
+        $helper->addError($cmsg, 'odoo_connector_tax.log');
         foreach ($items as $item) {
             $itemId = $item->getId();
             $itemDesc = $item->getName();
@@ -306,6 +313,7 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             if ($itemTaxPercent > 0) {
                 $itemTaxes = [];
                 if ($thisQuote) {
+                    $helper->addError("Inside Quote", 'odoo_connector_tax.log');
                     $qItems = $thisQuote->getAllItems();
                     $oQtItemId = $item->getQuoteItemId();
                     if ($parent) {
@@ -316,44 +324,49 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                         $appliedTaxes = $qItem['applied_taxes'];
                         if ($qItemId == $oQtItemId && $appliedTaxes) {
                             foreach ($appliedTaxes as $appliedTaxe) {
+                                $helper->addError("Inside Applied Taxes ------------", 'odoo_connector_tax.log');
                                 $taxCode = $appliedTaxe['id'];
                                 $erpTaxId = $this->getOdooTaxId($taxCode);
                                 if ($erpTaxId) {
                                     array_push($itemTaxes, new xmlrpcval($erpTaxId, "int"));
                                 }
+                                $cmsg = [$taxCode,$erpTaxId];
+                                $helper->addError($cmsg, 'odoo_connector_tax.log');
+
                             }
                             break;
                         }
                     }
-                }
-                $tableName = $resource->getTableName('sales_order_tax_item');
-                $taxItems = $write->query("SELECT * FROM ".$tableName." WHERE item_id='".$itemId."'")->fetchAll();
-                if ($taxItems && empty($itemTaxes)) {
-                    foreach ($taxItems as $itemTax) {
-                        $erpTaxId = 0;
-                        $tableName = $resource->getTableName('sales_order_tax');
-                        $select = "SELECT code FROM ".$tableName;
-                        $queryTax = $select." WHERE tax_id='".$itemTax['tax_id']."' AND order_id= '".$mageOrderId."'";
-                        $orderTax = $write->query($queryTax);
-                        $taxCodeResult = $orderTax->fetch();
-                        
-                        $taxCode = $taxCodeResult["code"];
-                        $erpTaxId = $this->getOdooTaxId($taxCode);
-
-                        /******************** getting erp tax id ******************/
-                        if ($erpTaxId) {
-                            array_push($itemTaxes, new xmlrpcval($erpTaxId, "int"));
-                        }
-                    }
                 } else {
-                    $tableName = $resource->getTableName('sales_order_tax');
-                    $orderTax = $write->query("SELECT code FROM ".$tableName." WHERE order_id= '".$mageOrderId."'");
-                    $taxCodeResult = $orderTax->fetch();
-                    if ($taxCodeResult) {
-                        $taxCode = $taxCodeResult["code"];
-                        $erpTaxId = $this->getOdooTaxId($taxCode);
-                        if ($erpTaxId) {
-                            array_push($itemTaxes, new xmlrpcval($erpTaxId, "int"));
+                    $tableName = $resource->getTableName('sales_order_tax_item');
+                    $taxItems = $write->query("SELECT * FROM ".$tableName." WHERE item_id='".$itemId."'")->fetchAll();
+                    if ($taxItems) {
+                        foreach ($taxItems as $itemTax) {
+                            $erpTaxId = 0;
+                            $tableName = $resource->getTableName('sales_order_tax');
+                            $select = "SELECT code FROM ".$tableName;
+                            $queryTax = $select." WHERE tax_id='".$itemTax['tax_id']."' AND order_id= '".$mageOrderId."'";
+                            $orderTax = $write->query($queryTax);
+                            $taxCodeResult = $orderTax->fetch();
+                            
+                            $taxCode = $taxCodeResult["code"];
+                            $erpTaxId = $this->getOdooTaxId($taxCode);
+
+                            /******************** getting erp tax id ******************/
+                            if ($erpTaxId) {
+                                array_push($itemTaxes, new xmlrpcval($erpTaxId, "int"));
+                            }
+                        }
+                    } else {
+                        $tableName = $resource->getTableName('sales_order_tax');
+                        $orderTax = $write->query("SELECT code FROM ".$tableName." WHERE order_id= '".$mageOrderId."'");
+                        $taxCodeResult = $orderTax->fetch();
+                        if ($taxCodeResult) {
+                            $taxCode = $taxCodeResult["code"];
+                            $erpTaxId = $this->getOdooTaxId($taxCode);
+                            if ($erpTaxId) {
+                                array_push($itemTaxes, new xmlrpcval($erpTaxId, "int"));
+                            }
                         }
                     }
                 }
@@ -379,7 +392,7 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     }
                 }
             }
-
+            $helper->addError($orderLineArray, 'odoo_connector_tax.log');
             $lineCreate = new xmlrpcmsg('execute');
             $lineCreate->addParam(new xmlrpcval($helper::$odooDb, "string"));
             $lineCreate->addParam(new xmlrpcval($userId, "int"));

@@ -25,7 +25,7 @@ class ExportAllIds extends \Magento\Backend\App\Action
         \Magento\Backend\App\Action\Context $context,
         \Webkul\Odoomagentoconnect\Helper\Connection $connection,
         \Webkul\Odoomagentoconnect\Model\Carrier $carrierMapping,
-        \Magento\Shipping\Model\Config $carrierModel,
+        \Magento\Shipping\Model\Config\Source\Allmethods $carrierModel,
         \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
     ) {
     
@@ -56,12 +56,17 @@ class ExportAllIds extends \Magento\Backend\App\Action
         $helper->getSocketConnect();
         $userId = $helper->getSession()->getUserId();
         if ($userId) {
-            $collection = $this->_carrierModel->getActiveCarriers();
-            foreach ($collection as $shippigCode => $shippingModel) {
-                $mapping = $this->_carrierMapping->getCollection()
-                                             ->addFieldToFilter('carrier_code', ['eq'=>$shippigCode]);
-                if ($mapping->getSize() == 0) {
-                    array_push($exportIds, $shippigCode);
+            $collection = $this->_carrierModel->toOptionArray();
+            foreach ($collection as $shippingCode => $shippingModel) {
+                if ($shippingMethods['label']) {
+                    foreach ($shippingMethods['value'] as $method) {
+                        $shippingMethodCode = $method['value'];
+                        $mapping = $this->_carrierMapping->getCollection()
+                            ->addFieldToFilter('carrier_code', ['eq'=>$shippingMethodCode]);
+                        if ($mapping->getSize() == 0) {
+                            array_push($exportIds, $shippingMethodCode);
+                        }
+                    }
                 }
             }
             

@@ -53,16 +53,21 @@ class Carrier extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $carrier = [];
         $carrier[''] ='--Select Magento Carrier--';
-        $collection = $this->_objectManager->create('\Magento\Shipping\Model\Config')->getActiveCarriers();
+        $methodCollection = $this->_objectManager->create('Magento\Shipping\Model\Config\Source\Allmethods')->toOptionArray();
 
-        foreach ($collection as $shippigCode => $shippingModel) {
-            $shippingTitle = $this->_scopeConfig->getValue('carriers/'.$shippigCode.'/title');
-            if (!$shippingTitle) {
-                $shippingTitle = $shippigCode;
+        foreach ($methodCollection as $shippingCode => $shippingMethods) {
+            if ($shippingMethods['label']) {
+                $shippingTitle = $shippingMethods['label'];
+                if (!$shippingTitle) {
+                        $shippingTitle = $shippingCode;
+                }
+                foreach ($shippingMethods['value'] as $method) {
+                    $shippingMethodCode = $method['value'];
+                    $shippingMethodLabel = explode("] ", $method['label'])[1];
+                    $carrier[$shippingMethodCode."|".$shippingTitle." - ".$shippingMethodLabel] = $shippingTitle." - ".$shippingMethodLabel;
+                }
             }
-            $carrier[$shippigCode] = $shippingTitle;
-        }
-        
+        }   
         return $carrier;
     }
 
@@ -151,10 +156,7 @@ class Carrier extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $context = $helper->getOdooContext();
             $client = $helper->getClientConnect();
             
-            $shippingTitle = $this->_scopeConfig->getValue('carriers/'.$shippigCode.'/title');
-            if (!$shippingTitle) {
-                $shippingTitle = $shippigCode;
-            }
+            $shippingTitle = $this->getShippingTitle($shippigCode);
             $carrierArray = $arrayVal = [
                         'name'=>new xmlrpcval($shippingTitle, "string")
                     ];
@@ -197,6 +199,27 @@ class Carrier extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             }
         }
         return $response;
+    }
+
+    public function getShippingTitle($shippigCode) 
+    {
+        $methodCollection = $this->_objectManager->create('Magento\Shipping\Model\Config\Source\Allmethods')->toOptionArray();
+        foreach ($methodCollection as $shippingCode => $shippingMethods) {
+            if ($shippingMethods['label']) {
+                $shippingTitle = $shippingMethods['label'];
+                if (!$shippingTitle) {
+                        $shippingTitle = $shippingCode;
+                }
+                foreach ($shippingMethods['value'] as $method) {
+                    $shippingMethodCode = $method['value'];
+                    if ($shippigCode == $shippingMethodCode) {
+                        $shippingMethodLabel = explode("] ", $method['label'])[1];
+                        $shipTitle = $shippingTitle." - ".$shippingMethodLabel;
+                        return $shipTitle;
+                    }
+                }
+            }
+        }
     }
 
     public function createMapping($data)
