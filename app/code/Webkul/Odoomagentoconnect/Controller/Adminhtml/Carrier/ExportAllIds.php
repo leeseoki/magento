@@ -58,8 +58,15 @@ class ExportAllIds extends \Magento\Backend\App\Action
         if ($userId) {
             $collection = $this->_carrierModel->toOptionArray();
             foreach ($collection as $shippingCode => $shippingModel) {
-                if ($shippingMethods['label']) {
-                    foreach ($shippingMethods['value'] as $method) {
+				/**
+				 * 2020-04-17 Dmitry Fedyuk https://www.upwork.com/fl/mage2pro
+				 * 1) «Undefined variable: shippingMethods
+				 * in app/code/Webkul/Odoomagentoconnect/Controller/Adminhtml/Carrier/ExportAllIds.php on line 61»:
+				 * https://github.com/vegandthecity/magento/issues/22
+				 * 2) The `$shippingMethods` variable seems to be a mistype. I have replaced it with `$shippingModel`.
+				 */
+                if ($shippingModel['label']) {
+                    foreach ($shippingModel['value'] as $method) {
                         $shippingMethodCode = $method['value'];
                         $mapping = $this->_carrierMapping->getCollection()
                             ->addFieldToFilter('carrier_code', ['eq'=>$shippingMethodCode]);
