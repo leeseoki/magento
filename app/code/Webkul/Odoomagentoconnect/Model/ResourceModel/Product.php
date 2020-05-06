@@ -227,7 +227,7 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $sku = $product->getSku();
         $xmlrpcArray = [
                 'type'=>new xmlrpcval($type, "string"),
-                'default_code'=>new xmlrpcval($sku, "string"),
+                'default_code'=>new xmlrpcval(urlencode($sku), "string"),
                 'magento_stock_id'=>new xmlrpcval($itemId, "int"),
                 'mage_id'=>new xmlrpcval($productId, "int"),
                 'sale_ok'=>new xmlrpcval($status, "boolean")
@@ -241,10 +241,10 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                             ->create('\Webkul\Odoomagentoconnect\Model\ResourceModel\Set')
                             ->getOdooAttributeSetId($setId);
         
-        $xmlrpcArray['name'] = new xmlrpcval($name, "string");
-        $xmlrpcArray['description'] = new xmlrpcval($description, "string");
+        $xmlrpcArray['name'] = new xmlrpcval(urlencode($name), "string");
+        $xmlrpcArray['description'] = new xmlrpcval(urlencode($description), "string");
         $xmlrpcArray['attribute_set_id'] = new xmlrpcval($odooSetId, "int");
-        $xmlrpcArray['description_sale'] = new xmlrpcval($shortDescription, "string");
+        $xmlrpcArray['description_sale'] = new xmlrpcval(urlencode($shortDescription), "string");
         $xmlrpcArray['list_price'] = new xmlrpcval($product->getPrice(), "double");
         $xmlrpcArray['prod_type'] = new xmlrpcval($productType, "string");
         $xmlrpcArray['weight'] = new xmlrpcval($product->getWeight(), "double");
