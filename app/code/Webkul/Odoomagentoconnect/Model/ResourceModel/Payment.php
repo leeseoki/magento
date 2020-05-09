@@ -75,11 +75,11 @@ class Payment extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function getErpPaymentArray()
     {
 
-        $collection = $this->_objectManager->create("\Magento\Sales\Model\Order")
-            ->load(4131);
-        echo "<pre>";
-        print_r($collection->debug());
-        Die;
+        // $collection = $this->_objectManager->create("\Magento\Sales\Model\Order")
+        //     ->load(4131);
+        // echo "<pre>";
+        // print_r($collection->debug());
+       
         $payment = [];
         $helper = $this->_helper;
         $helper->getSocketConnect();
